@@ -7,12 +7,13 @@ client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 client.bind(("localhost", randint(1000, 5999)))
 
 def receive():
-    try:
-        message, _ = client.recvfrom(2048)
-        print(message.decode())
-    except:
-        pass
-        # TODO
+    while True:
+        try:
+            message, _ = client.recvfrom(2048)
+            print(message.decode())
+        except:
+            pass
+            # TODO
 
 def send(nickname, recipient, message_type):
     while True:
@@ -71,9 +72,9 @@ if __name__ == "__main__":
         print("Goodbye!")
         exit(0)
 
-    change_message_type()
+    recipient, message_type = change_message_type()
 
-    thread_send = threading.Thread(target=send)
+    thread_send = threading.Thread(target=send, args=[nickname, recipient, message_type])
     thread_send.start()
 
 
