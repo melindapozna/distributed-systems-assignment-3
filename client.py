@@ -1,7 +1,7 @@
 import threading
 import socket
 from random import randint
-
+import os
 
 client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 client.bind(("localhost", randint(1000, 5999)))
@@ -11,9 +11,9 @@ def receive():
         try:
             message, _ = client.recvfrom(2048)
             print(message.decode())
-        except:
-            pass
-            # TODO
+        except Exception:
+            continue
+
 
 def send(nickname, recipient, message_type):
     while True:
@@ -21,7 +21,7 @@ def send(nickname, recipient, message_type):
         if message == "/q":
             print("Goodbye!")
             client.close()
-            exit(0)
+            os._exit(0)
         elif message == "/change":
             recipient, message_type = change_message_type()
         else:
@@ -43,7 +43,7 @@ def change_message_type():
         if choice == 0:
             print("Goodbye!")
             client.close()
-            exit(0)
+            os._exit(0)
         elif choice == 1:
             return change_recipient("p")
         elif choice == 2:
@@ -55,7 +55,7 @@ def change_recipient(message_type):
     if recipient == "/q":
         print("Goodbye!")
         client.close()
-        exit(0)
+        os._exit(0)
     return recipient, message_type
 
 
@@ -70,7 +70,9 @@ if __name__ == "__main__":
     nickname = input("Enter your nickname:")
     if nickname == "/q":
         print("Goodbye!")
-        exit(0)
+        os._exit(0)
+
+    client.sendto(f"{nickname}::Connected!::p::{nickname}".encode(), ("localhost", 6000))
 
     recipient, message_type = change_message_type()
 

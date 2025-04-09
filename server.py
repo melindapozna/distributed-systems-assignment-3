@@ -32,9 +32,10 @@ def receive():
                 clients.append(address)
 
             if message_type == "p":
-                private_messages.put((nickname, content, nicknames_to_addresses[recipient], address))
-                if not nickname in nicknames_to_addresses:
+                if nickname not in nicknames_to_addresses:
                     nicknames_to_addresses[nickname] = address
+
+                private_messages.put((nickname, content, recipient, address))
 
             elif message_type == "g":
                 group_messages.put((nickname, content, recipient, address))
@@ -45,19 +46,24 @@ def receive():
             print(message)
         except Exception as e:
             print(e)
+            continue
 
 
 def send_private():
     while True:
         while not private_messages.empty():
-            nickname, content, recipient, address = private_messages.get()
+            nickname, content, recipient_nickname, sender_address = private_messages.get()
             try:
-                if address not in clients:
-                    pass
-                server.sendto(f"{nickname}: {content}".encode(), nicknames_to_addresses[recipient])
-            except:
-                clients.remove(nicknames_to_addresses[recipient])
-                nicknames_to_addresses.pop(recipient)
+                if recipient_nickname not in nicknames_to_addresses:
+                    print(f"[Server] Recipient {recipient_nickname} not found.")
+                    continue
+
+                recipient_address = nicknames_to_addresses[recipient_nickname]
+                server.sendto(f"[PRIVATE] {nickname}: {content}".encode(), recipient_address)
+
+            except Exception as e:
+                print(e)
+                continue
 
 
 def send_group():
