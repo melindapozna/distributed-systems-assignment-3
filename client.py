@@ -2,6 +2,7 @@ import threading
 import socket
 from random import randint
 import os
+from time import sleep
 
 client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 client.bind(("localhost", randint(1000, 5999)))
@@ -71,8 +72,9 @@ if __name__ == "__main__":
     if nickname == "/q":
         print("Goodbye!")
         os._exit(0)
-
-    client.sendto(f"{nickname}::Connected!::p::{nickname}".encode(), ("localhost", 6000))
+    else:
+        client.sendto(f"{nickname}::Connected!::p::{nickname}".encode(), ("localhost", 6000))
+        sleep(0.5)
 
     recipient, message_type = change_message_type()
 

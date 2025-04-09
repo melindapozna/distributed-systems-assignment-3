@@ -55,15 +55,15 @@ def send_private():
             nickname, content, recipient_nickname, sender_address = private_messages.get()
             try:
                 if recipient_nickname not in nicknames_to_addresses:
-                    print(f"[Server] Recipient {recipient_nickname} not found.")
+                    print(f"Recipient {recipient_nickname} not found.")
                     continue
-
                 recipient_address = nicknames_to_addresses[recipient_nickname]
                 server.sendto(f"[PRIVATE] {nickname}: {content}".encode(), recipient_address)
 
-            except Exception as e:
-                print(e)
-                continue
+            except:
+                clients.remove(sender_address)
+                nicknames_to_addresses.pop(nickname)
+
 
 
 def send_group():
